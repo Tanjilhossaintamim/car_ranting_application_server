@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django_filters',
     'debug_toolbar',
     'rest_framework',
+    'djoser',
     'api',
     'user',
 ]
@@ -139,3 +140,14 @@ INTERNAL_IPS = [
 ]
 
 AUTH_USER_MODEL = 'user.User'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+
+    ),
+}
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('JWT',),
+}
