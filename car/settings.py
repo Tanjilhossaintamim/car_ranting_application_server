@@ -41,8 +41,9 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
     'django_filters',
     'debug_toolbar',
-    'rest_framework',
     'djoser',
+    'drf_yasg',
+    'rest_framework',
     'api',
     'user',
 ]
@@ -150,4 +151,9 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT',),
+}
+DJOSER = {
+    'SERIALIZERS': {
+        'user_create': 'user.serializers.UserCreateSerializer',
+    }
 }
