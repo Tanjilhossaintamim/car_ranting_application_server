@@ -1,12 +1,13 @@
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import SearchFilter
 from .permissions import IsAdminOrReadOnly
 from .pagination import DefaultPagination
 from .filters import CarFilter
-from .models import Catagory, Cart, Car
-from .serializers import CatagorySerializer, CarSerializer
+from .models import Catagory, Cart, Car, CartItem
+from .serializers import CatagorySerializer, CarSerializer, CartSerializer, CartItemSerializer, AddCartItemSerializer, UpdateCartItemSerializer
 # Create your views here.
 
 
@@ -46,3 +47,27 @@ class OwnerCarViewSet(ModelViewSet):
 
     def get_serializer_context(self):
         return {'user_id': self.request.user.id}
+
+
+class CartViewSet(CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
+
+    def get_queryset(self):
+        return Cart.objects.filter(pk=self.kwargs['pk'])
+
+
+class CartItemViewSet(ModelViewSet):
+    http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return AddCartItemSerializer
+        if self.request.method == 'PATCH':
+            return UpdateCartItemSerializer
+        return CartItemSerializer
+
+    def get_serializer_context(self):
+        return {'cart_id': self.kwargs['cart_pk']}
