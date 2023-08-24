@@ -20,6 +20,7 @@ class Car(models.Model):
     image = models.ImageField(upload_to='car')
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.PROTECT)
+    catagory = models.ForeignKey(Catagory, on_delete=models.PROTECT)
 
     def __str__(self):
         return self.title
