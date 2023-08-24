@@ -47,8 +47,7 @@ class Owner(models.Model):
                                     )
     date_of_birth = models.DateField(null=True, blank=True)
 
-    def __str__(self):
-        return self.first_name
+    
 
 
 class Client(models.Model):
@@ -60,8 +59,7 @@ class Client(models.Model):
     image = models.ImageField(upload_to='clientImage', null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
 
-    def __str__(self):
-        return self.first_name
+    
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
