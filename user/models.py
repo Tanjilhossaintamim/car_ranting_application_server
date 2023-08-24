@@ -43,6 +43,8 @@ class Owner(models.Model):
     last_name = models.CharField(max_length=255, null=True, blank=True)
     phone = models.CharField(max_length=15, null=True, blank=True)
     image = models.ImageField(upload_to='ownerImage', null=True, blank=True)
+    company_name = models.CharField(max_length=20, null=True, blank=True
+                                    )
     date_of_birth = models.DateField(null=True, blank=True)
 
     def __str__(self):
@@ -55,7 +57,7 @@ class Client(models.Model):
     first_name = models.CharField(max_length=255, null=True, blank=True)
     last_name = models.CharField(max_length=255, null=True, blank=True)
     phone = models.CharField(max_length=15, null=True, blank=True)
-    image = models.ImageField(upload_to='ownerImage', null=True, blank=True)
+    image = models.ImageField(upload_to='clientImage', null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
 
     def __str__(self):
