@@ -1,3 +1,5 @@
+from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin
 from django_filters.rest_framework import DjangoFilterBackend
@@ -6,7 +8,7 @@ from rest_framework.filters import SearchFilter
 from .permissions import IsAdminOrReadOnly
 from .pagination import DefaultPagination
 from .filters import CarFilter
-from .models import Catagory, Cart, Car, CartItem
+from .models import Catagory, Cart, Car, CartItem, OrderItem
 from .serializers import CatagorySerializer, CarSerializer, CartSerializer, CartItemSerializer, AddCartItemSerializer, UpdateCartItemSerializer
 # Create your views here.
 
@@ -19,6 +21,11 @@ class CatagoryViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter]
     search_fields = ['title']
 
+    def destroy(self, request, *args, **kwargs):
+        if Car.objects.filter(catagory_id=self.kwargs['pk']).count() > 0:
+            return Response({'error': 'Catagory Has Some Products'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return super().destroy(request, *args, **kwargs)
+
 
 class CarViewSet(ModelViewSet):
     queryset = Car.objects.select_related('catagory').all()
@@ -28,6 +35,11 @@ class CarViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter]
     search_fields = ['title']
     filterset_class = CarFilter
+
+    def destroy(self, request, *args, **kwargs):
+        if OrderItem.objects.filter(car_id=self.kwargs['pk']).count() > 0:
+            return Response({'error': 'Car Delete Not Possible This Car Has Order!'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return super().destroy(request, *args, **kwargs)
 
     def get_serializer_context(self):
         return {'user_id': self.request.user.id}
@@ -40,6 +52,11 @@ class OwnerCarViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter]
     search_fields = ['title']
     filterset_class = CarFilter
+
+    def destroy(self, request, *args, **kwargs):
+        if OrderItem.objects.filter(car_id=self.kwargs['pk']).count() > 0:
+            return Response({'error': 'Car Delete Not Possible This Car Has Order!'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return super().destroy(request, *args, **kwargs)
 
     def get_queryset(self):
         owner_id = self.request.user.id
