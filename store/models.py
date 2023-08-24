@@ -49,7 +49,7 @@ class Order(models.Model):
     ]
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.PROTECT)
-    placed_at = models.DateTimeField(auto_now_add=True)
+    placed_at = models.DateField(auto_now_add=True)
     payment_status = models.CharField(
         max_length=1, choices=PAYMENT_CHOICES, default=PAYMENT_PENDING)
 

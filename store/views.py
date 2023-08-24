@@ -1,15 +1,15 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.filters import SearchFilter
 from .permissions import IsAdminOrReadOnly
 from .pagination import DefaultPagination
 from .filters import CarFilter
-from .models import Catagory, Cart, Car, CartItem, OrderItem
-from .serializers import CatagorySerializer, CarSerializer, CartSerializer, CartItemSerializer, AddCartItemSerializer, UpdateCartItemSerializer
+from .models import Catagory, Cart, Car, CartItem, Order, OrderItem
+from .serializers import CatagorySerializer, CarSerializer, CartSerializer, CartItemSerializer, AddCartItemSerializer, OrderSerializer, UpdateCartItemSerializer, CreateOrderSerializer, OrderItemSerializer
 # Create your views here.
 
 
@@ -67,17 +67,17 @@ class OwnerCarViewSet(ModelViewSet):
 
 
 class CartViewSet(CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
-    queryset = Cart.objects.all()
+    queryset = Cart.objects.all().prefetch_related('items__car')
     serializer_class = CartSerializer
-
-    def get_queryset(self):
-        return Cart.objects.filter(pk=self.kwargs['pk'])
 
 
 class CartItemViewSet(ModelViewSet):
     http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
+
+    def get_queryset(self):
+        return CartItem.objects.filter(cart_id=self.kwargs['cart_pk'])
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
@@ -88,3 +88,27 @@ class CartItemViewSet(ModelViewSet):
 
     def get_serializer_context(self):
         return {'cart_id': self.kwargs['cart_pk']}
+
+
+class OrderViewSet(ModelViewSet):
+
+    def get_permissions(self):
+        if self.request.method in ['PATCH', 'DELETE']:
+            return [IsAdminUser()]
+        return [IsAuthenticated()]
+
+    def create(self, request, *args, **kwargs):
+        serializer = CreateOrderSerializer(data=request.data, context={
+            'user_id': self.request.user.id})
+        serializer.is_valid(raise_exception=True)
+        order = serializer.save()
+        serializer = OrderSerializer(order)
+        return Response(serializer.data)
+
+    def get_queryset(self):
+        return Order.objects.prefetch_related('items__car').filter(user_id=self.request.user.id)
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return CreateOrderSerializer
+        return OrderSerializer
