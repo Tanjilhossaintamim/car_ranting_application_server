@@ -5,9 +5,11 @@ from .models import Car, Catagory, Cart, CartItem, Order, OrderItem
 
 
 class CatagorySerializer(serializers.ModelSerializer):
+    total_car = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = Catagory
-        fields = ['id', 'title']
+        fields = ['id', 'title', 'total_car']
 
 
 class CarSerializer(serializers.ModelSerializer):

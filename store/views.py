@@ -1,4 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models.aggregates import Count
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
@@ -14,7 +15,7 @@ from .serializers import CatagorySerializer, CarSerializer, CartSerializer, Cart
 
 
 class CatagoryViewSet(ModelViewSet):
-    queryset = Catagory.objects.all()
+    queryset = Catagory.objects.annotate(total_car=Count('car')).all()
     serializer_class = CatagorySerializer
     permission_classes = [IsAdminOrReadOnly]
     pagination_class = DefaultPagination
