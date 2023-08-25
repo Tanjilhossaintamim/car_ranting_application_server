@@ -16,7 +16,7 @@ class CatagoryAdmin(admin.ModelAdmin):
 class CarAdmin(admin.ModelAdmin):
     '''Admin View for Car'''
 
-    list_display = ('id', 'title', 'model', 'description',
+    list_display = ('id', 'title', 'description',
                     'price', 'image', 'user')
     list_per_page = 10
 

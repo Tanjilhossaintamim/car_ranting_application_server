@@ -18,7 +18,7 @@ class CarSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Car
-        fields = ['id', 'title', 'image', 'model',
+        fields = ['id', 'title', 'image',
                   'price', 'catagory_id', 'user_id']
 
     def validate_catagory_id(self, catagory_id):
@@ -125,7 +125,7 @@ class CreateOrderSerializer(serializers.Serializer):
                     user_id=user_id, placed_at=datetime.datetime.now().date())
                 print('no')
                 raise serializers.ValidationError(
-                    {'error': 'You Have an existing order in this day !'})
+                    {'error': 'You Have an existing order today !'})
             except Order.DoesNotExist:
                 order = Order.objects.create(user_id=user_id)
                 cart_items = CartItem.objects.select_related(

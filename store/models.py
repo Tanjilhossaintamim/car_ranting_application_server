@@ -14,7 +14,7 @@ class Catagory(models.Model):
 
 class Car(models.Model):
     title = models.CharField(max_length=255)
-    model = models.CharField(max_length=255)
+
     description = models.TextField()
     price = models.DecimalField(max_digits=12, decimal_places=2)
     image = models.ImageField(upload_to='car')
