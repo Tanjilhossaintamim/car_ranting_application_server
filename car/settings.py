@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'djoser',
     'drf_yasg',
+    'corsheaders',
     'rest_framework',
     'api',
     'user',
@@ -51,6 +52,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -140,6 +142,10 @@ INTERNAL_IPS = [
     # ...
     "127.0.0.1",
     # ...
+]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173/",
+    
 ]
 
 AUTH_USER_MODEL = 'user.User'
