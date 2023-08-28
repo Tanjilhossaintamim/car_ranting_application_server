@@ -1,4 +1,5 @@
 import datetime
+from decimal import Decimal
 from django.db import transaction
 from rest_framework import serializers
 from .models import Car, Catagory, Cart, CartItem, Order, OrderItem
@@ -18,7 +19,7 @@ class CarSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Car
-        fields = ['id', 'title', 'image',
+        fields = ['id', 'title', 'image','description',
                   'price', 'catagory_id', 'user_id']
 
     def validate_catagory_id(self, catagory_id):
@@ -36,10 +37,13 @@ class CarSerializer(serializers.ModelSerializer):
 
 class CartItemSerializer(serializers.ModelSerializer):
     car = CarSerializer()
+    total_price=serializers.SerializerMethodField()
+    def get_total_price(self,cartItem:CartItem):
+        return cartItem.car.price *Decimal(cartItem.quantity)
 
     class Meta:
         model = CartItem
-        fields = ['id', 'car', 'quantity']
+        fields = ['id', 'car', 'quantity','total_price']
 
 
 class CartSerializer(serializers.ModelSerializer):
