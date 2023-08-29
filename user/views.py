@@ -3,22 +3,21 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework.mixins import RetrieveModelMixin, UpdateModelMixin
-from .serializers import ClientSerializer, OwnerSerializer
+from rest_framework.mixins import RetrieveModelMixin, UpdateModelMixin, CreateModelMixin
+from .serializers import ClientSerializer, OwnerSerializer, OwnerProfileUpdateSerializer, ClientProfileUpdateSerializer
 from .models import User, Client, Owner
 
 # Create your views here.
 
 
 class ProfileViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
+    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         user = self.request.user
         if Client.objects.filter(user=user.id).exists():
             return ClientSerializer
         return OwnerSerializer
-
-   
 
     def get_queryset(self):
         user = self.request.user
@@ -50,3 +49,16 @@ class ProfileViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
                 return Response(serializer.data)
+
+
+class OwnerProfileUpdateViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
+    http_method_names = ['get', 'patch']
+    queryset = Owner.objects.all()
+    serializer_class = OwnerProfileUpdateSerializer
+
+
+class ClientProfileUpdateViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
+    http_method_names = ['get', 'patch']
+
+    queryset = Client.objects.all()
+    serializer_class = ClientProfileUpdateSerializer

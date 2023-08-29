@@ -8,11 +8,11 @@ from django.db.models.signals import post_save
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, password, **kwargs):
+    def create_user(self, email, password, is_owner, **kwargs):
         if not email:
             raise ValueError('Please Insert An Email !')
         email = self.normalize_email(email)
-        user = self.model(email=email, password=password)
+        user = self.model(email=email, password=password, is_owner=is_owner)
         user.set_password(password)
         user.save(using=self.db)
         return user
@@ -47,8 +47,6 @@ class Owner(models.Model):
                                     )
     date_of_birth = models.DateField(null=True, blank=True)
 
-    
-
 
 class Client(models.Model):
     user = models.OneToOneField(
@@ -58,8 +56,6 @@ class Client(models.Model):
     phone = models.CharField(max_length=15, null=True, blank=True)
     image = models.ImageField(upload_to='clientImage', null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
-
-    
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

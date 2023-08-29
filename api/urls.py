@@ -1,11 +1,14 @@
 from django.urls import path
 from rest_framework_nested import routers
-from user.views import ProfileViewSet
+from user.views import ProfileViewSet, OwnerProfileUpdateViewSet, ClientProfileUpdateViewSet
 from store.views import CartViewSet, CatagoryViewSet, CarViewSet, OwnerCarViewSet, CartItemViewSet, OrderViewSet
 
 
 router = routers.DefaultRouter()
 router.register('profile', ProfileViewSet, basename='profile')
+router.register('ownerprofile', OwnerProfileUpdateViewSet)
+router.register('clientprofile', ClientProfileUpdateViewSet)
+#######################
 router.register('catagory', CatagoryViewSet)
 router.register('car', CarViewSet)
 router.register('ownercar', OwnerCarViewSet, basename='ownercar')
