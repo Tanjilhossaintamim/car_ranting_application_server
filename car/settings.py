@@ -145,7 +145,7 @@ INTERNAL_IPS = [
 ]
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    
+
 ]
 
 AUTH_USER_MODEL = 'user.User'
@@ -164,5 +164,6 @@ SIMPLE_JWT = {
 DJOSER = {
     'SERIALIZERS': {
         'user_create': 'user.serializers.UserCreateSerializer',
+        'current_user': 'user.serializers.UserSerializer',
     }
 }

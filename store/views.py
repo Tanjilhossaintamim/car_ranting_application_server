@@ -5,12 +5,13 @@ from rest_framework import status
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.parsers import MultiPartParser, JSONParser, FileUploadParser
 from rest_framework.filters import SearchFilter
 from .permissions import IsAdminOrReadOnly
 from .pagination import DefaultPagination
 from .filters import CarFilter
 from .models import Catagory, Cart, Car, CartItem, Order, OrderItem
-from .serializers import CatagorySerializer, CarSerializer, CartSerializer, CartItemSerializer, AddCartItemSerializer, OrderSerializer, UpdateCartItemSerializer, CreateOrderSerializer, OrderItemSerializer
+from .serializers import CatagorySerializer, CarSerializer, CartSerializer, CartItemSerializer, AddCartItemSerializer, OrderSerializer, UpdateCartItemSerializer, CreateOrderSerializer, OrderItemSerializer, UpdateCarSerializer
 # Create your views here.
 
 
@@ -32,10 +33,16 @@ class CarViewSet(ModelViewSet):
     queryset = Car.objects.select_related('catagory').all()
     serializer_class = CarSerializer
     permission_classes = [IsAdminOrReadOnly]
+    parser_classes = [MultiPartParser, JSONParser, FileUploadParser]
     pagination_class = DefaultPagination
     filter_backends = [DjangoFilterBackend, SearchFilter]
     search_fields = ['title']
     filterset_class = CarFilter
+
+    def get_serializer_class(self):
+        if self.request.method in ['PUT', 'PATCH']:
+            return UpdateCarSerializer
+        return CarSerializer
 
     def destroy(self, request, *args, **kwargs):
         if OrderItem.objects.filter(car_id=self.kwargs['pk']).count() > 0:
@@ -47,7 +54,6 @@ class CarViewSet(ModelViewSet):
 
 
 class OwnerCarViewSet(ModelViewSet):
-    serializer_class = CarSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = DefaultPagination
     filter_backends = [DjangoFilterBackend, SearchFilter]
@@ -58,6 +64,11 @@ class OwnerCarViewSet(ModelViewSet):
         if OrderItem.objects.filter(car_id=self.kwargs['pk']).count() > 0:
             return Response({'error': 'Car Delete Not Possible This Car Has Order!'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         return super().destroy(request, *args, **kwargs)
+
+    def get_serializer_class(self):
+        if self.request.method in ['PUT', 'PATCH']:
+            return UpdateCarSerializer
+        return CarSerializer
 
     def get_queryset(self):
         owner_id = self.request.user.id

@@ -13,17 +13,33 @@ class CatagorySerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'total_car']
 
 
+class UpdateCarSerializer(serializers.ModelSerializer):
+    catagory_id = serializers.IntegerField()
+    user_id = serializers.IntegerField(read_only=True)
+
+    def validate_catagory_id(self, catagory_id):
+
+        if Catagory.objects.filter(pk=catagory_id).exists():
+            return catagory_id
+        raise serializers.ValidationError('Invalid Catagory Id')
+
+    class Meta:
+        model = Car
+        fields = ['id', 'title', 'description', 'image',
+                  'price', 'catagory_id', 'user_id']
+
+
 class CarSerializer(serializers.ModelSerializer):
     catagory_id = serializers.IntegerField()
     user_id = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Car
-        fields = ['id', 'title', 'image','description',
+        fields = ['id', 'title', 'image', 'description',
                   'price', 'catagory_id', 'user_id']
 
     def validate_catagory_id(self, catagory_id):
-        print(catagory_id)
+
         if Catagory.objects.filter(pk=catagory_id).exists():
             return catagory_id
         raise serializers.ValidationError('Invalid Catagory Id')
@@ -37,13 +53,14 @@ class CarSerializer(serializers.ModelSerializer):
 
 class CartItemSerializer(serializers.ModelSerializer):
     car = CarSerializer()
-    total_price=serializers.SerializerMethodField()
-    def get_total_price(self,cartItem:CartItem):
-        return cartItem.car.price *Decimal(cartItem.quantity)
+    total_price = serializers.SerializerMethodField()
+
+    def get_total_price(self, cartItem: CartItem):
+        return cartItem.car.price * Decimal(cartItem.quantity)
 
     class Meta:
         model = CartItem
-        fields = ['id', 'car', 'quantity','total_price']
+        fields = ['id', 'car', 'quantity', 'total_price']
 
 
 class CartSerializer(serializers.ModelSerializer):

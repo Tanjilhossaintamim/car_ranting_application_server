@@ -17,7 +17,7 @@ class Car(models.Model):
 
     description = models.TextField()
     price = models.DecimalField(max_digits=12, decimal_places=2)
-    image = models.ImageField(upload_to='car')
+    image = models.ImageField(upload_to='car', null=True, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.PROTECT)
     catagory = models.ForeignKey(Catagory, on_delete=models.PROTECT)

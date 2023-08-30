@@ -6,8 +6,10 @@ from store.views import CartViewSet, CatagoryViewSet, CarViewSet, OwnerCarViewSe
 
 router = routers.DefaultRouter()
 router.register('profile', ProfileViewSet, basename='profile')
-router.register('ownerprofile', OwnerProfileUpdateViewSet)
-router.register('clientprofile', ClientProfileUpdateViewSet)
+router.register('ownerprofile', OwnerProfileUpdateViewSet,
+                basename='ownerprofile')
+router.register('clientprofile', ClientProfileUpdateViewSet,
+                basename='clientprofile')
 #######################
 router.register('catagory', CatagoryViewSet)
 router.register('car', CarViewSet)
