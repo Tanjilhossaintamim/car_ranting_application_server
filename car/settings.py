@@ -142,6 +142,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
     "https://car-ranting-application-client.vercel.app",
+    "https://localhost:5173"
 
 ]
 
